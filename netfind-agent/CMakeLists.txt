@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(netfind-agent C)
+
+include(cmake/CompilerOptions.cmake)
+include(cmake/GitVersion.cmake)
+include(cmake/PrintAllTargets.cmake)
+
+add_subdirectory("lib/")
+add_subdirectory("src/")
+
+print_all_targets("${CMAKE_CURRENT_LIST_DIR}")

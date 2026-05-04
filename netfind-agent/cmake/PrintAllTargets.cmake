@@ -1,0 +1,12 @@
+function(print_all_targets DIR)
+	get_property(TARGETS DIRECTORY "${DIR}" PROPERTY BUILDSYSTEM_TARGETS)
+	foreach (TARGET IN LISTS TARGETS)
+		string(REPLACE "${CMAKE_CURRENT_LIST_DIR}" "" RELDIR "${DIR}")
+		message(STATUS "Target: ${TARGET} | .${RELDIR}/")
+	endforeach ()
+
+	get_property(SUBDIRS DIRECTORY "${DIR}" PROPERTY SUBDIRECTORIES)
+	foreach (SUBDIR IN LISTS SUBDIRS)
+		print_all_targets("${SUBDIR}")
+	endforeach ()
+endfunction()
