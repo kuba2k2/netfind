@@ -30,11 +30,12 @@ nf_err_t ethcap_option_update(ethcap_t *ethcap, nf_cfg_option_t *opt);
 nf_err_t ethcap_action_call(ethcap_t *ethcap, nf_action_t *call);
 
 // ethcap_network.c
-nf_err_t ethcap_network_identify(ip_net_t *net, const struct sockaddr *addr_sa, const struct sockaddr *mask_sa);
-nf_err_t ethcap_networks_copy_mac(ip_net_t *networks);
+ip_net_t *ethcap_networks_identify(const pcap_if_t *dev);
 const char *ethcap_networks_describe(const ip_net_t *networks, char *out, size_t len);
-ip_net_t *ethcap_networks_identify_pcap(const pcap_if_t *dev);
 bool ethcap_networks_is_cap_local(const ethcap_cap_t *cap);
+
+// ethcap_network_*.c
+nf_err_t ethcap_network_fill_addrs(const char *name, ip_net_t *net);
 
 // ethcap_thread.c
 void *ethcap_thread(ethcap_t *ethcap);

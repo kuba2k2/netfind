@@ -37,7 +37,7 @@ ethcap_t *ethcap_init(devdb_t *devdb) {
 		DL_APPEND(ethcap->mod.cfg, opt);
 		pcap_if_t *dev = NULL;
 		LL_FOREACH(devs, dev) {
-			ip_net_t *networks = ethcap_networks_identify_pcap(dev);
+			ip_net_t *networks = ethcap_networks_identify(dev);
 			if (!networks)
 				continue;
 			char buf[256];
