@@ -1,0 +1,12 @@
+[submodule "netfind-agent/lib/cjson"]
+	path = netfind-agent/lib/cjson
+	url = https://github.com/DaveGamble/cJSON
+[submodule "netfind-agent/lib/libpcap"]
+	path = netfind-agent/lib/libpcap
+	url = https://github.com/the-tcpdump-group/libpcap
+[submodule "netfind-agent/lib/uthash"]
+	path = netfind-agent/lib/uthash
+	url = https://github.com/troydhanson/uthash
+[submodule "netfind-agent/lib/printf"]
+	path = netfind-agent/lib/printf
+	url = https://github.com/eyalroz/printf
