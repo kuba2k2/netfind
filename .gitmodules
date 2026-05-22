@@ -10,3 +10,11 @@
 [submodule "netfind-agent/lib/printf"]
 	path = netfind-agent/lib/printf
 	url = https://github.com/eyalroz/printf
+[submodule "netfind-agent/lib/curl"]
+	path = netfind-agent/lib/curl
+	url = https://github.com/curl/curl
+	shallow = true
+[submodule "netfind-agent/lib/wolfssl"]
+	path = netfind-agent/lib/wolfssl
+	url = https://github.com/wolfSSL/wolfssl
+	shallow = true

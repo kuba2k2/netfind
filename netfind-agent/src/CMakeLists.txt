@@ -16,6 +16,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC lt_logger)
 target_link_libraries(${PROJECT_NAME} PUBLIC pcap_static)
 target_link_libraries(${PROJECT_NAME} PUBLIC printf)
 target_link_libraries(${PROJECT_NAME} PUBLIC uthash)
+target_link_libraries(${PROJECT_NAME} PUBLIC libcurl_static)
 
 # Link libraries for various platforms
 if (WIN32)
