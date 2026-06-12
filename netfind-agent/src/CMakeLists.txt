@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # Sources
-file(GLOB_RECURSE SOURCES "*.c" "devdb/*.c" "module/*.c" "module/**/*.c")
+file(GLOB_RECURSE SOURCES "*.c" "conn/*.c" "devdb/*.c" "module/*.c" "module/**/*.c")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Compiler options

@@ -35,14 +35,14 @@
 	for (volatile int UNIQ(loop) = xSemaphoreTake((m), portMAX_DELAY); UNIQ(loop) == pdPASS; \
 		 xSemaphoreGive((m)), UNIQ(loop)++)
 
-#define NF_MALLOC(ptr, size, err)                                                                   \
-	do {                                                                                            \
-		ptr = malloc(size);                                                                         \
-		if (ptr == NULL) {                                                                          \
-			LT_E("Memory allocation failed for '" #ptr "' (%llu bytes)", (unsigned long long)size); \
-			err;                                                                                    \
-		}                                                                                           \
-		memset(ptr, 0, size);                                                                       \
+#define NF_MALLOC(ptr, size, err)                                                                     \
+	do {                                                                                              \
+		ptr = malloc(size);                                                                           \
+		if (ptr == NULL) {                                                                            \
+			LT_E("Memory allocation failed for '" #ptr "' (%llu bytes)", (unsigned long long)(size)); \
+			err;                                                                                      \
+		}                                                                                             \
+		memset(ptr, 0, size);                                                                         \
 	} while (0)
 
 #define NF_ERR(level, err, ...)  \

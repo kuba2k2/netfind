@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+enum MessageType {
+	PUB = 0;
+	SUB = 1;
+	GET = 2;
+	DEL = 3;
+	UNSUB = 4;
+	LWT = 5;
+}
+
+enum PublishMode {
+	SEND = 0;
+	RETAIN = 1;
+	PERSIST = 2;
+	APPEND = 3;
+}
+
+message Message {
+	optional MessageType type = 1;
+	optional string key = 2;
+	optional string value = 3;
+	optional uint64 value_at = 4;
+	optional PublishMode mode = 5;
+}
+
+message MessageList {
+	repeated Message messages = 1;
+}
