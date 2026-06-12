@@ -54,6 +54,10 @@ if (WIN32)
 	target_link_libraries(pcap_static PUBLIC "${Packet_ROOT}/Lib/x64/Packet.lib")
 endif ()
 
+# nanopb
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/nanopb/extra/")
+find_package(Nanopb REQUIRED)
+
 # wolfSSL
 set(WOLFSSL_CURL ON)
 set(WOLFSSL_EXAMPLES OFF)

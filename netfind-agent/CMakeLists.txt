@@ -9,6 +9,7 @@ include(cmake/GitVersion.cmake)
 include(cmake/PrintAllTargets.cmake)
 
 add_subdirectory("lib/")
+add_subdirectory("proto/")
 add_subdirectory("src/")
 
 print_all_targets("${CMAKE_CURRENT_LIST_DIR}")

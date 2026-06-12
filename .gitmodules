@@ -18,3 +18,7 @@
 	path = netfind-agent/lib/wolfssl
 	url = https://github.com/wolfSSL/wolfssl
 	shallow = true
+[submodule "netfind-agent/lib/nanopb"]
+	path = netfind-agent/lib/nanopb
+	url = https://github.com/nanopb/nanopb
+	shallow = true
