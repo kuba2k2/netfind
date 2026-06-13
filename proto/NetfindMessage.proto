@@ -16,7 +16,7 @@ enum PublishMode {
 	APPEND = 3;
 }
 
-message Message {
+message NetfindMessage {
 	optional MessageType type = 1;
 	optional string key = 2;
 	optional string value = 3;
@@ -24,6 +24,6 @@ message Message {
 	optional PublishMode mode = 5;
 }
 
-message MessageList {
-	repeated Message messages = 1;
+message NetfindMessageList {
+	repeated NetfindMessage messages = 1;
 }

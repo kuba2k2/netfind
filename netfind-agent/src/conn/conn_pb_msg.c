@@ -29,7 +29,7 @@ bool pb_decode_field_string(pb_istream_t *stream, const pb_field_t *field, void 
 bool pb_encode_Message(pb_ostream_t *stream, const conn_msg_t *msg, unsigned int flags) {
 	if (!msg->key)
 		return false;
-	Message message = {
+	NetfindMessage message = {
 		.has_type			= true,
 		.type				= (MessageType)msg->type,
 		.key.funcs.encode	= pb_encode_field_string,
@@ -41,17 +41,17 @@ bool pb_encode_Message(pb_ostream_t *stream, const conn_msg_t *msg, unsigned int
 		.has_mode			= msg->type == CONN_MSG_PUB,
 		.mode				= (PublishMode)msg->mode,
 	};
-	if (!pb_encode_ex(stream, &Message_msg, &message, flags))
+	if (!pb_encode_ex(stream, &NetfindMessage_msg, &message, flags))
 		return false;
 	return true;
 }
 
 bool pb_decode_Message(pb_istream_t *stream, conn_msg_t *msg, unsigned int flags) {
-	Message message = {
+	NetfindMessage message = {
 		.key.funcs.decode	= pb_decode_field_string,
 		.value.funcs.decode = pb_decode_field_string,
 	};
-	if (!pb_decode_ex(stream, &Message_msg, &message, flags))
+	if (!pb_decode_ex(stream, &NetfindMessage_msg, &message, flags))
 		goto err;
 
 	if (!message.has_type)
@@ -108,21 +108,21 @@ err:
 }
 
 bool pb_encode_MessageList(pb_ostream_t *stream, const conn_msg_t *msgs, unsigned int flags) {
-	MessageList message_list = {
+	NetfindMessageList message_list = {
 		.messages.funcs.encode = pb_encode_field_messages,
 		.messages.arg		   = (void *)msgs,
 	};
-	if (!pb_encode_ex(stream, &MessageList_msg, &message_list, flags))
+	if (!pb_encode_ex(stream, &NetfindMessageList_msg, &message_list, flags))
 		return false;
 	return true;
 }
 
 bool pb_decode_MessageList(pb_istream_t *stream, conn_msg_t **msgs, unsigned int flags) {
-	MessageList message_list = {
+	NetfindMessageList message_list = {
 		.messages.funcs.decode = pb_decode_field_messages,
 		.messages.arg		   = NULL,
 	};
-	if (!pb_decode_ex(stream, &MessageList_msg, &message_list, flags))
+	if (!pb_decode_ex(stream, &NetfindMessageList_msg, &message_list, flags))
 		goto err;
 	*msgs = message_list.messages.arg;
 	return true;
