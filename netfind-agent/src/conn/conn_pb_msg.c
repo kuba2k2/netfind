@@ -36,8 +36,10 @@ bool pb_encode_Message(pb_ostream_t *stream, const conn_msg_t *msg, unsigned int
 		.topic.arg			= msg->topic,
 		.value.funcs.encode = pb_encode_field_string,
 		.value.arg			= msg->value,
-		.has_value_at		= msg->type == CONN_MSG_PUB,
-		.value_at			= msg->value_at,
+		.has_created_at		= msg->type == CONN_MSG_PUB,
+		.created_at			= msg->created_at,
+		.has_updated_at		= msg->type == CONN_MSG_PUB,
+		.updated_at			= msg->updated_at,
 		.has_mode			= msg->type == CONN_MSG_PUB,
 		.mode				= (PublishMode)msg->mode,
 	};
@@ -63,9 +65,13 @@ bool pb_decode_Message(pb_istream_t *stream, conn_msg_t *msg, unsigned int flags
 	msg->topic = message.topic.arg;
 	msg->value = message.value.arg;
 
-	if (message.type == MessageType_PUB && !message.has_value_at)
+	if (message.type == MessageType_PUB && !message.has_created_at)
 		goto err;
-	msg->value_at = message.value_at;
+	msg->created_at = message.created_at;
+
+	if (message.type == MessageType_PUB && !message.has_updated_at)
+		goto err;
+	msg->updated_at = message.updated_at;
 
 	if (message.type == MessageType_PUB && !message.has_mode)
 		goto err;

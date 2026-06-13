@@ -34,12 +34,20 @@ void conn_msg_add(
 	conn_msg_type_t type,
 	const char *topic,
 	const char *value,
-	time_t value_at,
+	time_t created_at,
+	time_t updated_at,
 	conn_pub_mode_t mode
 );
 void conn_msg_free(conn_msg_t *msg);
 void conn_msgs_free(conn_msg_t *msgs);
-void conn_pub(conn_t *conn, const char *topic, const char *value, time_t value_at, conn_pub_mode_t mode);
+void conn_pub(
+	conn_t *conn,
+	const char *topic,
+	const char *value,
+	time_t created_at,
+	time_t updated_at,
+	conn_pub_mode_t mode
+);
 void conn_get(conn_t *conn, const char *topic);
 void conn_del(conn_t *conn, const char *topic);
 void conn_lwt(conn_t *conn, const char *topic, const char *value);

@@ -7,17 +7,19 @@ void conn_msg_add(
 	conn_msg_type_t type,
 	const char *topic,
 	const char *value,
-	time_t value_at,
+	time_t created_at,
+	time_t updated_at,
 	conn_pub_mode_t mode
 ) {
 	conn_msg_t *msg = calloc(1, sizeof(*msg));
 	if (!msg)
 		return;
-	msg->type	  = type;
-	msg->topic	  = strdup(topic);
-	msg->value	  = value ? strdup(value) : NULL;
-	msg->value_at = value_at;
-	msg->mode	  = mode;
+	msg->type		= type;
+	msg->topic		= strdup(topic);
+	msg->value		= value ? strdup(value) : NULL;
+	msg->created_at = created_at;
+	msg->updated_at = updated_at;
+	msg->mode		= mode;
 	DL_APPEND(conn->send_msgs, msg);
 }
 
@@ -38,28 +40,35 @@ void conn_msgs_free(conn_msg_t *msgs) {
 	}
 }
 
-void conn_pub(conn_t *conn, const char *topic, const char *value, time_t value_at, conn_pub_mode_t mode) {
+void conn_pub(
+	conn_t *conn,
+	const char *topic,
+	const char *value,
+	time_t created_at,
+	time_t updated_at,
+	conn_pub_mode_t mode
+) {
 	if (!topic)
 		return;
-	conn_msg_add(conn, CONN_MSG_PUB, topic, value, value_at, mode);
+	conn_msg_add(conn, CONN_MSG_PUB, topic, value, created_at, updated_at, mode);
 }
 
 void conn_get(conn_t *conn, const char *topic) {
 	if (!topic)
 		return;
-	conn_msg_add(conn, CONN_MSG_GET, topic, NULL, 0, 0);
+	conn_msg_add(conn, CONN_MSG_GET, topic, NULL, 0, 0, 0);
 }
 
 void conn_del(conn_t *conn, const char *topic) {
 	if (!topic)
 		return;
-	conn_msg_add(conn, CONN_MSG_DEL, topic, NULL, 0, 0);
+	conn_msg_add(conn, CONN_MSG_DEL, topic, NULL, 0, 0, 0);
 }
 
 void conn_lwt(conn_t *conn, const char *topic, const char *value) {
 	if (!topic || !value)
 		return;
-	conn_msg_add(conn, CONN_MSG_LWT, topic, value, 0, 0);
+	conn_msg_add(conn, CONN_MSG_LWT, topic, value, 0, 0, 0);
 }
 
 void conn_sub(conn_t *conn, const char *topic, conn_cb_func_t func, void *param) {
@@ -73,7 +82,7 @@ void conn_sub(conn_t *conn, const char *topic, conn_cb_func_t func, void *param)
 	cb->param = param;
 	DL_APPEND(conn->recv_cbs, cb);
 
-	conn_msg_add(conn, CONN_MSG_SUB, topic, NULL, 0, 0);
+	conn_msg_add(conn, CONN_MSG_SUB, topic, NULL, 0, 0, 0);
 }
 
 void conn_unsub(conn_t *conn, const char *topic, conn_cb_func_t func) {
@@ -90,7 +99,7 @@ void conn_unsub(conn_t *conn, const char *topic, conn_cb_func_t func) {
 	}
 
 	if (cb != NULL)
-		conn_msg_add(conn, CONN_MSG_UNSUB, topic, NULL, 0, 0);
+		conn_msg_add(conn, CONN_MSG_UNSUB, topic, NULL, 0, 0, 0);
 }
 
 void conn_msgs_dispatch(conn_t *conn, const conn_msg_t *msgs) {

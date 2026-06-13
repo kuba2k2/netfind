@@ -12,7 +12,8 @@ typedef struct conn_msg_t {
 	conn_msg_type_t type;
 	char *topic;
 	char *value;
-	time_t value_at;
+	time_t created_at;
+	time_t updated_at;
 	conn_pub_mode_t mode;
 	struct conn_msg_t *prev, *next;
 } conn_msg_t;
