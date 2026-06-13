@@ -32,17 +32,17 @@ void conn_free(conn_t *conn);
 void conn_msg_add(
 	conn_t *conn,
 	conn_msg_type_t type,
-	const char *key,
+	const char *topic,
 	const char *value,
 	time_t value_at,
 	conn_pub_mode_t mode
 );
 void conn_msg_free(conn_msg_t *msg);
 void conn_msgs_free(conn_msg_t *msgs);
-void conn_pub(conn_t *conn, const char *key, const char *value, time_t value_at, conn_pub_mode_t mode);
-void conn_get(conn_t *conn, const char *key);
-void conn_del(conn_t *conn, const char *key);
-void conn_lwt(conn_t *conn, const char *key, const char *value);
-void conn_sub(conn_t *conn, const char *key, conn_cb_func_t func, void *param);
-void conn_unsub(conn_t *conn, const char *key, conn_cb_func_t func);
+void conn_pub(conn_t *conn, const char *topic, const char *value, time_t value_at, conn_pub_mode_t mode);
+void conn_get(conn_t *conn, const char *topic);
+void conn_del(conn_t *conn, const char *topic);
+void conn_lwt(conn_t *conn, const char *topic, const char *value);
+void conn_sub(conn_t *conn, const char *topic, conn_cb_func_t func, void *param);
+void conn_unsub(conn_t *conn, const char *topic, conn_cb_func_t func);
 void conn_msgs_dispatch(conn_t *conn, const conn_msg_t *msgs);

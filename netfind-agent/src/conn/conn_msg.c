@@ -5,7 +5,7 @@
 void conn_msg_add(
 	conn_t *conn,
 	conn_msg_type_t type,
-	const char *key,
+	const char *topic,
 	const char *value,
 	time_t value_at,
 	conn_pub_mode_t mode
@@ -14,7 +14,7 @@ void conn_msg_add(
 	if (!msg)
 		return;
 	msg->type	  = type;
-	msg->key	  = strdup(key);
+	msg->topic	  = strdup(topic);
 	msg->value	  = value ? strdup(value) : NULL;
 	msg->value_at = value_at;
 	msg->mode	  = mode;
@@ -24,7 +24,7 @@ void conn_msg_add(
 void conn_msg_free(conn_msg_t *msg) {
 	if (!msg)
 		return;
-	free(msg->key);
+	free(msg->topic);
 	free(msg->value);
 	free(msg);
 }
@@ -38,64 +38,64 @@ void conn_msgs_free(conn_msg_t *msgs) {
 	}
 }
 
-void conn_pub(conn_t *conn, const char *key, const char *value, time_t value_at, conn_pub_mode_t mode) {
-	if (!key)
+void conn_pub(conn_t *conn, const char *topic, const char *value, time_t value_at, conn_pub_mode_t mode) {
+	if (!topic)
 		return;
-	conn_msg_add(conn, CONN_MSG_PUB, key, value, value_at, mode);
+	conn_msg_add(conn, CONN_MSG_PUB, topic, value, value_at, mode);
 }
 
-void conn_get(conn_t *conn, const char *key) {
-	if (!key)
+void conn_get(conn_t *conn, const char *topic) {
+	if (!topic)
 		return;
-	conn_msg_add(conn, CONN_MSG_GET, key, NULL, 0, 0);
+	conn_msg_add(conn, CONN_MSG_GET, topic, NULL, 0, 0);
 }
 
-void conn_del(conn_t *conn, const char *key) {
-	if (!key)
+void conn_del(conn_t *conn, const char *topic) {
+	if (!topic)
 		return;
-	conn_msg_add(conn, CONN_MSG_DEL, key, NULL, 0, 0);
+	conn_msg_add(conn, CONN_MSG_DEL, topic, NULL, 0, 0);
 }
 
-void conn_lwt(conn_t *conn, const char *key, const char *value) {
-	if (!key || !value)
+void conn_lwt(conn_t *conn, const char *topic, const char *value) {
+	if (!topic || !value)
 		return;
-	conn_msg_add(conn, CONN_MSG_LWT, key, value, 0, 0);
+	conn_msg_add(conn, CONN_MSG_LWT, topic, value, 0, 0);
 }
 
-void conn_sub(conn_t *conn, const char *key, conn_cb_func_t func, void *param) {
-	if (!key || !func)
+void conn_sub(conn_t *conn, const char *topic, conn_cb_func_t func, void *param) {
+	if (!topic || !func)
 		return;
 	conn_cb_t *cb = calloc(1, sizeof(*cb));
 	if (!cb)
 		return;
-	cb->key	  = strdup(key);
+	cb->topic = strdup(topic);
 	cb->func  = func;
 	cb->param = param;
 	DL_APPEND(conn->recv_cbs, cb);
 
-	conn_msg_add(conn, CONN_MSG_SUB, key, NULL, 0, 0);
+	conn_msg_add(conn, CONN_MSG_SUB, topic, NULL, 0, 0);
 }
 
-void conn_unsub(conn_t *conn, const char *key, conn_cb_func_t func) {
-	if (!key || !func)
+void conn_unsub(conn_t *conn, const char *topic, conn_cb_func_t func) {
+	if (!topic || !func)
 		return;
 	conn_cb_t *cb = NULL, *tmp = NULL;
 	DL_FOREACH_SAFE(conn->recv_cbs, cb, tmp) {
-		if (strcmp(cb->key, key) != 0 || cb->func != func)
+		if (strcmp(cb->topic, topic) != 0 || cb->func != func)
 			continue;
 		DL_DELETE(conn->recv_cbs, cb);
-		free(cb->key);
+		free(cb->topic);
 		free(cb);
 		break;
 	}
 
 	if (cb != NULL)
-		conn_msg_add(conn, CONN_MSG_UNSUB, key, NULL, 0, 0);
+		conn_msg_add(conn, CONN_MSG_UNSUB, topic, NULL, 0, 0);
 }
 
 void conn_msgs_dispatch(conn_t *conn, const conn_msg_t *msgs) {
 	const conn_msg_t *msg = NULL;
 	DL_FOREACH(msgs, msg) {
-		LT_F("conn / %s / %s", msg->key, msg->value);
+		LT_F("conn / %s / %s", msg->topic, msg->value);
 	}
 }

@@ -10,7 +10,7 @@
 
 typedef struct conn_msg_t {
 	conn_msg_type_t type;
-	char *key;
+	char *topic;
 	char *value;
 	time_t value_at;
 	conn_pub_mode_t mode;
@@ -18,7 +18,7 @@ typedef struct conn_msg_t {
 } conn_msg_t;
 
 typedef struct conn_cb_t {
-	char *key;
+	char *topic;
 	conn_cb_func_t func;
 	void *param;
 	struct conn_cb_t *prev, *next;

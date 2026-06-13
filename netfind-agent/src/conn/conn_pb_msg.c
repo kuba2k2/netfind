@@ -27,13 +27,13 @@ bool pb_decode_field_string(pb_istream_t *stream, const pb_field_t *field, void 
 }
 
 bool pb_encode_Message(pb_ostream_t *stream, const conn_msg_t *msg, unsigned int flags) {
-	if (!msg->key)
+	if (!msg->topic)
 		return false;
 	NetfindMessage message = {
 		.has_type			= true,
 		.type				= (MessageType)msg->type,
-		.key.funcs.encode	= pb_encode_field_string,
-		.key.arg			= msg->key,
+		.topic.funcs.encode = pb_encode_field_string,
+		.topic.arg			= msg->topic,
 		.value.funcs.encode = pb_encode_field_string,
 		.value.arg			= msg->value,
 		.has_value_at		= msg->type == CONN_MSG_PUB,
@@ -48,7 +48,7 @@ bool pb_encode_Message(pb_ostream_t *stream, const conn_msg_t *msg, unsigned int
 
 bool pb_decode_Message(pb_istream_t *stream, conn_msg_t *msg, unsigned int flags) {
 	NetfindMessage message = {
-		.key.funcs.decode	= pb_decode_field_string,
+		.topic.funcs.decode = pb_decode_field_string,
 		.value.funcs.decode = pb_decode_field_string,
 	};
 	if (!pb_decode_ex(stream, &NetfindMessage_msg, &message, flags))
@@ -58,9 +58,9 @@ bool pb_decode_Message(pb_istream_t *stream, conn_msg_t *msg, unsigned int flags
 		goto err;
 	msg->type = (conn_msg_type_t)message.type;
 
-	if (!message.key.arg)
+	if (!message.topic.arg)
 		goto err;
-	msg->key   = message.key.arg;
+	msg->topic = message.topic.arg;
 	msg->value = message.value.arg;
 
 	if (message.type == MessageType_PUB && !message.has_value_at)
@@ -74,7 +74,7 @@ bool pb_decode_Message(pb_istream_t *stream, conn_msg_t *msg, unsigned int flags
 	return true;
 
 err:
-	free(message.key.arg);
+	free(message.topic.arg);
 	free(message.value.arg);
 	return false;
 }
