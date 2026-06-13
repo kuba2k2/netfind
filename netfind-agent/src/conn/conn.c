@@ -2,8 +2,6 @@
 
 #include "conn_priv.h"
 
-#include <RecordMessage.pb.h>
-
 conn_t *conn_init(const char *url, const char *token) {
 	if (!url || !token)
 		return NULL;
