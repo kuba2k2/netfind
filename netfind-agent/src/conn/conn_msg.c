@@ -7,8 +7,8 @@ void conn_msg_add(
 	conn_msg_type_t type,
 	const char *topic,
 	const char *value,
-	time_t created_at,
-	time_t updated_at,
+	uint64_t created_at,
+	uint64_t updated_at,
 	conn_pub_mode_t mode
 ) {
 	conn_msg_t *msg = calloc(1, sizeof(*msg));
@@ -44,8 +44,8 @@ void conn_pub(
 	conn_t *conn,
 	const char *topic,
 	const char *value,
-	time_t created_at,
-	time_t updated_at,
+	uint64_t created_at,
+	uint64_t updated_at,
 	conn_pub_mode_t mode
 ) {
 	if (!topic)
