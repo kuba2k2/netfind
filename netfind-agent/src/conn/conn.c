@@ -3,7 +3,7 @@
 #include "conn_priv.h"
 
 conn_t *conn_init(const char *url, const char *token) {
-	if (!url || !token)
+	if (!url)
 		return NULL;
 
 	int err;
@@ -11,7 +11,7 @@ conn_t *conn_init(const char *url, const char *token) {
 	NF_MALLOC(conn, sizeof(*conn), return NULL);
 
 	conn->url	= strdup(url);
-	conn->token = strdup(token);
+	conn->token = token ? strdup(token) : NULL;
 
 	if ((err = curl_global_init(CURL_GLOBAL_ALL)))
 		NF_ERR(E, goto err, "curl init failed; err=%s", curl_easy_strerror(err));
@@ -58,11 +58,33 @@ void *conn_thread(conn_t *conn) {
 		CURL *curl = curl_easy_init();
 		if (!curl)
 			NF_ERR(E, break, "curl easy init failed");
+		struct curl_slist *headers = NULL;
+
+		// find out the system hostname
+		char hostname[64];
+		gethostname(hostname, sizeof(hostname));
+
+		// set the user agent string
+		{
+			char user_agent[128];
+			snprintf(user_agent, sizeof(user_agent), "NetfindAgent/%s on %s", (char *)(GIT_VERSION) + 1, hostname);
+			curl_easy_setopt(curl, CURLOPT_USERAGENT, user_agent);
+		}
+
+		// pass the Authorization header
+		{
+			// use the specified token or the hostname
+			const char *token = (conn->token != NULL && *conn->token != '\0') ? conn->token : hostname;
+			char authorization[256];
+			snprintf(authorization, sizeof(authorization), "Authorization: Bearer %s", token);
+			headers = curl_slist_append(headers, authorization);
+		}
 
 		// set options and connect
 		curl_easy_setopt(curl, CURLOPT_URL, conn->url);
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 2L);
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		LT_I("curl connecting...");
 		int err = curl_easy_perform(curl);
 		LT_I("curl connected");
