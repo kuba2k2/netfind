@@ -14,9 +14,9 @@ class Connection:
         if user_agent:
             self.name = f"{self.name} ({user_agent})"
 
-    def recv(self) -> list[NetfindMessage]:
+    def recv(self, timeout: float = None) -> list[NetfindMessage]:
         # receive a WebSocket frame
-        frame = self.ws.receive()
+        frame = self.ws.receive(timeout=timeout)
         if not isinstance(frame, bytes):
             return []
         # decode received frame into a list of messages

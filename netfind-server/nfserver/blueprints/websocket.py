@@ -7,6 +7,7 @@ from flask_sock import Sock
 from simple_websocket import ConnectionClosed, Server
 
 from nfserver.broker import broker
+from nfserver.db import get_db
 from nfserver.proto import Connection, MessageType, reduce_msgs
 
 bp = Blueprint("websocket", __name__)
@@ -19,9 +20,14 @@ def root(ws: Server):
     info(f"Connection opened: {conn}")
     broker.add_connection(conn)
 
+    db = get_db()
     try:
         while True:
-            msgs = conn.recv()
+            # in every loop, restart the write-ahead-log (throttled internally in 'db')
+            db.wal_checkpoint()
+
+            # receive messages with a 10-second timeout
+            msgs = conn.recv(timeout=10.0)
             if not msgs:
                 continue
 

@@ -2,11 +2,15 @@
 
 import sqlite3
 from datetime import datetime
+from logging import warning
+from time import time
 
 import click
 from flask import Flask, current_app, g
 
 from .proto import MessageType, NetfindMessage, Pattern, PublishMode
+
+LAST_CHECKPOINT = [0.0]
 
 
 class Database:
@@ -15,15 +19,27 @@ class Database:
     def __init__(self):
         self.db = sqlite3.connect(
             database=current_app.config["DATABASE"],
+            timeout=10.0,
             detect_types=sqlite3.PARSE_DECLTYPES,
         )
+        self.db.execute("PRAGMA journal_mode = WAL")
         self.db.row_factory = sqlite3.Row
 
     def recreate(self) -> None:
         with current_app.open_resource("db.sql") as f:
             self.db.executescript(f.read().decode("utf-8"))
 
+    def wal_checkpoint(self) -> None:
+        if (time() - LAST_CHECKPOINT[0]) < 10.0:
+            return
+        LAST_CHECKPOINT[0] = time()
+        try:
+            self.db.execute("PRAGMA wal_checkpoint(RESTART)")
+        except sqlite3.OperationalError as e:
+            warning(f"WAL checkpoint failed: {e}")
+
     def close(self) -> None:
+        self.wal_checkpoint()
         self.db.close()
 
     def commit(self) -> None:
