@@ -60,11 +60,16 @@ out:
 	if (!ret)
 		LT_W("Message encode failed");
 	// show an error if sending failed
-	if (err != CURLE_OK)
+	if (err != CURLE_OK) {
 		LT_E("WebSocket send failed; err=%s", curl_easy_strerror(err));
-
-	// free all messages
-	conn_msg_free(msgs);
+		// put the failed messages back on the queue
+		NF_WITH_MUTEX(conn->send_msgs_mutex) {
+			DL_CONCAT(conn->send_msgs, msgs);
+		}
+	} else {
+		// free all messages
+		conn_msg_free(msgs);
+	}
 	return err;
 }
 
