@@ -2,7 +2,7 @@
 
 from logging import exception, info
 
-from flask import Blueprint, request
+from flask import Blueprint, g, request
 from flask_sock import Sock
 from simple_websocket import ConnectionClosed, Server
 
@@ -33,6 +33,10 @@ def root(ws: Server):
 
             # reduce identical messages
             msgs = reduce_msgs(msgs)
+
+            # fill in client name in message topics
+            for msg in msgs:
+                msg.topic = msg.topic.replace("/@", f"/{g.client['name']}")
 
             # group messages by their type
             msgs_pub_del = [

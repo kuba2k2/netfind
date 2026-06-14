@@ -2,7 +2,7 @@
 
 from logging import error, info
 
-from flask import Blueprint, abort, request
+from flask import Blueprint, abort, g, request
 
 from nfserver.db import get_db
 
@@ -22,13 +22,13 @@ def check_auth():
     db = get_db()
     token = request.authorization.token
 
-    client = db.db.execute(
+    g.client = db.db.execute(
         "SELECT * FROM client WHERE token = ?",
         (token,),
     ).fetchone()
 
-    if client is None:
+    if g.client is None:
         error(f"Bad authentication from {request.remote_addr} with token '{token}'")
         abort(401)
 
-    info(f"Authenticated {request.remote_addr} as '{client['name']}'")
+    info(f"Authenticated {request.remote_addr} as '{g.client['name']}'")
