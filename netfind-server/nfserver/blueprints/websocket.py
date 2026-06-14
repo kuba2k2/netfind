@@ -27,24 +27,25 @@ def root(ws: Server):
 
             # reduce identical messages
             msgs = reduce_msgs(msgs)
+
             # group messages by their type
-            msgs_pub_del = filter(
-                lambda m: m.type in (MessageType.PUB, MessageType.DEL),
-                msgs,
-            )
-            msgs_get_sub_unsub = filter(
-                lambda m: m.type
-                in (MessageType.GET, MessageType.SUB, MessageType.UNSUB),
-                msgs,
-            )
-            msgs_lwt = filter(
-                lambda m: m.type in (MessageType.LWT,),
-                msgs,
-            )
+            msgs_pub_del = [
+                m for m in msgs if m.type in (MessageType.PUB, MessageType.DEL)
+            ]
+            msgs_get_sub_unsub = [
+                m
+                for m in msgs
+                if m.type in (MessageType.GET, MessageType.SUB, MessageType.UNSUB)
+            ]
+            msgs_lwt = [m for m in msgs if m.type in (MessageType.LWT,)]
+
             # pass all messages to the broker
-            broker.accept_pub_del(conn, list(msgs_pub_del))
-            broker.accept_get_sub_unsub(conn, list(msgs_get_sub_unsub))
-            broker.accept_lwt(conn, list(msgs_lwt))
+            if msgs_pub_del:
+                broker.accept_pub_del(conn, msgs_pub_del)
+            if msgs_get_sub_unsub:
+                broker.accept_get_sub_unsub(conn, msgs_get_sub_unsub)
+            if msgs_lwt:
+                broker.accept_lwt(conn, msgs_lwt)
 
     except ConnectionClosed:
         pass
