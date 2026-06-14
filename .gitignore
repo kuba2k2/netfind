@@ -652,3 +652,4 @@ obj/
 
 # End of https://www.toptal.com/developers/gitignore/api/c,c++,cmake,clion+all,visualstudiocode,python,kotlin,androidstudio,android,gradle,java,intellij+all,git
 
+cmake-build/
