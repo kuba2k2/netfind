@@ -11,7 +11,7 @@ class Pattern(str):
         if self.regex:
             return
         self.regex = f"^{self}$"
-        self.regex = self.regex.replace("/+/", "/[^/]+?/")
+        self.regex = self.regex.replace("/+", "/[^/]+?")
         self.regex = self.regex.replace("/#", "/.+?")
 
     def matches(self, other: Union[str, "Pattern"]) -> bool:
