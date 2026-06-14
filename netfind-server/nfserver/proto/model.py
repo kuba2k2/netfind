@@ -45,22 +45,40 @@ class NetfindMessage(BaseMessage):
             return False
         if self.topic.endswith("/"):
             return False
+
         # this is not a valid wildcard
         if "#/" in self.topic:
             return False
-        # PUB and LWT topics can't have wildcards
+
         if self.type in (MessageType.PUB, MessageType.LWT):
+            # PUB and LWT must have a value
+            if self.value is None:
+                return False
+            # PUB and LWT topics can't have wildcards
             if "/#" in self.topic:
                 return False
             if "/+" in self.topic:
                 return False
         else:
+            # only DEL *may* have a value
+            if self.value is not None and self.type != MessageType.DEL:
+                return False
             # there can be at most 1 multi-level wildcard
             if (cnt := self.topic.count("/#")) > 1:
                 return False
             # the multi-level wildcard, if present, must be the last segment
             if cnt == 1 and not self.topic.endswith("/#"):
                 return False
+
+        if self.type == MessageType.PUB:
+            # PUB must have created_at, updated_at, mode
+            if self.created_at is None:
+                return False
+            if self.updated_at is None:
+                return False
+            if self.mode is None:
+                return False
+
         return True
 
 

@@ -6,8 +6,7 @@ from datetime import datetime
 import click
 from flask import Flask, current_app, g
 
-from .msg_util import Pattern
-from .proto import MessageType, NetfindMessage, PublishMode
+from .proto import MessageType, NetfindMessage, Pattern, PublishMode
 
 
 class Database:

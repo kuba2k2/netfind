@@ -3,19 +3,22 @@
 from collections import defaultdict
 from threading import Lock
 
-from simple_websocket import Server
-
 from .db import get_db
-from .msg_util import Pattern
-from .proto import MessageType, NetfindMessage, PublishMode
-from .queue import SendQueue
+from .proto import (
+    Connection,
+    MessageType,
+    NetfindMessage,
+    Pattern,
+    PublishMode,
+    SendQueue,
+)
 
 
 class Broker:
     msgs: dict[str, NetfindMessage]  # {topic: message}
-    conn: set[Server]  # {...clients}
-    sub: dict[Pattern, set[Server]]  # {pattern: {...subscribers}}
-    lwt: dict[Server, tuple[str, str]]  # {client: (topic, value)}
+    conn: set[Connection]  # {...clients}
+    sub: dict[Pattern, set[Connection]]  # {pattern: {...subscribers}}
+    lwt: dict[Connection, tuple[str, str]]  # {client: (topic, value)}
     msgs_lock: Lock
     conn_lock: Lock
     sub_lock: Lock
@@ -31,12 +34,12 @@ class Broker:
         self.sub_lock = Lock()
         self.lwt_lock = Lock()
 
-    def add_connection(self, conn: Server) -> None:
+    def add_connection(self, conn: Connection) -> None:
         # add the connection
         with self.conn_lock:
             self.conn.add(conn)
 
-    def del_connection(self, conn: Server) -> None:
+    def del_connection(self, conn: Connection) -> None:
         # discard the connection
         with self.conn_lock:
             self.conn.discard(conn)
@@ -60,7 +63,7 @@ class Broker:
         )
         self.accept_pub_del(conn=None, msgs=[msg])
 
-    def get_subs(self, topic_or_pattern: str | Pattern) -> set[Server]:
+    def get_subs(self, topic_or_pattern: str | Pattern) -> set[Connection]:
         out = set()
         # read subscribers that are currently connected
         with self.sub_lock:
@@ -69,7 +72,11 @@ class Broker:
                     out |= subs
         return out
 
-    def accept_pub_del(self, conn: Server | None, msgs: list[NetfindMessage]) -> None:
+    def accept_pub_del(
+        self,
+        conn: Connection | None,
+        msgs: list[NetfindMessage],
+    ) -> None:
         queue = SendQueue()
         # process PUB/DEL messages, collect everything to dispatch to subscribers
         msgs = self.save_msgs(msgs)
@@ -83,7 +90,11 @@ class Broker:
         queue.discard(conn)
         queue.send()
 
-    def accept_get_sub_unsub(self, conn: Server, msgs: list[NetfindMessage]) -> None:
+    def accept_get_sub_unsub(
+        self,
+        conn: Connection,
+        msgs: list[NetfindMessage],
+    ) -> None:
         queue = SendQueue()
         # process GET/SUB/UNSUB messages, collect everything to send to 'conn'
         for msg in msgs:
@@ -99,7 +110,11 @@ class Broker:
                     self.sub[pattern].discard(conn)
         queue.send()
 
-    def accept_lwt(self, conn: Server, msgs: list[NetfindMessage]) -> None:
+    def accept_lwt(
+        self,
+        conn: Connection,
+        msgs: list[NetfindMessage],
+    ) -> None:
         # process LWT messages (should only ever be one)
         for msg in msgs:
             with self.lwt_lock:

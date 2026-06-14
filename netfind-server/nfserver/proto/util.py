@@ -1,28 +1,9 @@
 #  Copyright (c) Kuba Szczodrzyński 2026-6-13.
 
-import re
 from itertools import groupby
-from typing import Iterator, Union
+from typing import Iterator
 
-from .proto import MessageType, NetfindMessage
-
-
-class Pattern(str):
-    regex: str = None
-
-    def init_regex(self) -> None:
-        if self.regex:
-            return
-        self.regex = f"^{self}$"
-        self.regex = self.regex.replace("/+/", "/[^/]+?/")
-        self.regex = self.regex.replace("/#", "/.+?")
-
-    def matches(self, other: Union[str, "Pattern"]) -> bool:
-        self.init_regex()
-        if isinstance(other, Pattern):
-            # TODO
-            return False
-        return bool(re.match(self.regex, other))
+from .model import MessageType, NetfindMessage
 
 
 def get_group_key(msg: NetfindMessage) -> tuple[MessageType, str, str | None]:

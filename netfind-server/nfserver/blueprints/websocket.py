@@ -7,28 +7,24 @@ from flask_sock import Sock
 from simple_websocket import ConnectionClosed, Server
 
 from nfserver.broker import broker
-from nfserver.msg_util import reduce_msgs
-from nfserver.proto import MessageType, NetfindMessageList
+from nfserver.proto import Connection, MessageType, reduce_msgs
 
 bp = Blueprint("websocket", __name__)
 sock = Sock()
 
 
 @sock.route("/ws", bp=bp)
-def root(conn: Server):
-    info(f"Connection opened: {request.remote_addr}, {request.user_agent}")
+def root(ws: Server):
+    conn = Connection(ws, ws.sock, request.user_agent.string)
+    info(f"Connection opened: {conn}")
     broker.add_connection(conn)
 
     try:
         while True:
-            frame = conn.receive()
-            if not isinstance(frame, bytes):
+            msgs = conn.recv()
+            if not msgs:
                 continue
 
-            # decode received frame into a list of messages
-            msgs = NetfindMessageList.loads(frame).messages
-            # filter out invalid messages
-            msgs = [msg for msg in msgs if msg.is_valid]
             # reduce identical messages
             msgs = reduce_msgs(msgs)
             # group messages by their type
@@ -55,5 +51,5 @@ def root(conn: Server):
     except Exception as e:
         exception("WebSocket connection failed", exc_info=e)
     finally:
-        info(f"Connection closed: {request.remote_addr}, {request.user_agent}")
+        info(f"Connection closed: {conn}")
         broker.del_connection(conn)
