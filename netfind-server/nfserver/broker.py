@@ -1,6 +1,7 @@
 #  Copyright (c) Kuba Szczodrzyński 2026-6-13.
 
 from collections import defaultdict
+from logging import info
 from threading import Lock
 
 from .db import get_db
@@ -49,7 +50,7 @@ class Broker:
                 subs.discard(conn)
         # check if there is an LWT set
         with self.lwt_lock:
-            lwt = self.lwt.get(conn)
+            lwt = self.lwt.pop(conn, None)
         if not lwt:
             return
         # publish LWT as a RETAIN message
@@ -61,6 +62,7 @@ class Broker:
             updated_at=NetfindMessage.now(),
             mode=PublishMode.RETAIN,
         )
+        info(f"Publishing LWT of {conn} as {msg.topic} = '{msg.value}'")
         self.accept_pub_del(conn=None, msgs=[msg])
 
     def get_subs(self, topic_or_pattern: str | Pattern) -> set[Connection]:
@@ -102,10 +104,12 @@ class Broker:
             if msg.type == MessageType.GET:
                 queue.extend(conn, self.load_msgs(pattern))
             elif msg.type == MessageType.SUB:
+                info(f"Subscribing {conn} to {pattern}")
                 with self.sub_lock:
                     self.sub[pattern].add(conn)
                 queue.extend(conn, self.load_msgs(pattern))
             elif msg.type == MessageType.UNSUB:
+                info(f"Unsubscribing {conn} from {pattern}")
                 with self.sub_lock:
                     self.sub[pattern].discard(conn)
         queue.send()
@@ -117,6 +121,7 @@ class Broker:
     ) -> None:
         # process LWT messages (should only ever be one)
         for msg in msgs:
+            info(f"Setting LWT of {conn} to {msg.topic} = '{msg.value}'")
             with self.lwt_lock:
                 self.lwt[conn] = (msg.topic, msg.value)
 
