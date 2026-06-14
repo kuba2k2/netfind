@@ -29,6 +29,12 @@ void hexdump(const void *buf, size_t len) {
 	fflush(stdout);
 }
 
+uint64_t millis() {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return ((uint64_t)tv.tv_sec * 1000ULL) + ((uint64_t)tv.tv_usec / 1000ULL);
+}
+
 void *memdup(const void *src, size_t size) {
 	if (!src || !size)
 		return NULL;

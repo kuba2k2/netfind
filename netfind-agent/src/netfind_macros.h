@@ -31,9 +31,8 @@
 #define STRUCT_PADDING(field, len) char _padding_##field[4 - (len) % 4]
 #define BUILD_BUG_ON(condition)	   ((void)sizeof(char[1 - 2 * !!(condition)]))
 
-#define NF_WITH_MUTEX(m)                                                                     \
-	for (volatile int UNIQ(loop) = xSemaphoreTake((m), portMAX_DELAY); UNIQ(loop) == pdPASS; \
-		 xSemaphoreGive((m)), UNIQ(loop)++)
+#define NF_WITH_MUTEX(m) \
+	for (volatile int UNIQ(loop) = pthread_mutex_lock(&(m)); UNIQ(loop) == 0; pthread_mutex_unlock(&(m)), UNIQ(loop)++)
 
 #define NF_MALLOC(ptr, size, err)                                                                     \
 	do {                                                                                              \

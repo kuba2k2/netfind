@@ -5,6 +5,7 @@
 #include <math.h>
 #include <memory.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -60,6 +61,7 @@ const char *nf_fmt(char *buf, size_t size, const char *fmt, ...);
 
 // netfind_utils.c
 void hexdump(const void *buf, size_t len);
+uint64_t millis();
 void *memdup(const void *src, size_t size);
 int strsplit(char *str, char delim, char **parts, int max);
 char *strlstrip(char *str, char ch);
