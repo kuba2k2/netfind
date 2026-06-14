@@ -52,7 +52,8 @@ static void devdb_put_ip_addrs(
 			/* netaddr= */ cap->netaddr,
 			/* devaddr= */ dhcp->mac_addr,
 			/* key= */ key,
-			/* value= */ nf_ip42str(buf, &opt[i])
+			/* value= */ nf_ip42str(buf, &opt[i]),
+			/* append= */ true
 		);
 	}
 }
@@ -72,7 +73,8 @@ static void devdb_put_string(
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ dhcp->mac_addr,
 		/* key= */ key,
-		/* value= */ buf
+		/* value= */ buf,
+		/* append= */ true
 	);
 }
 
@@ -92,7 +94,8 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 			/* netaddr= */ cap->netaddr,
 			/* devaddr= */ cap->src_macaddr,
 			/* key= */ "ip.udp.67.protocol",
-			/* value= */ "dhcp-server"
+			/* value= */ "dhcp-server",
+			/* append= */ true
 		);
 	} else {
 		devdb_put(
@@ -100,7 +103,8 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 			/* netaddr= */ cap->netaddr,
 			/* devaddr= */ cap->src_macaddr,
 			/* key= */ "ip.udp.68.protocol",
-			/* value= */ "dhcp"
+			/* value= */ "dhcp",
+			/* append= */ true
 		);
 	}
 
@@ -146,7 +150,8 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 					/* netaddr= */ cap->netaddr,
 					/* devaddr= */ dhcp->mac_addr,
 					/* key= */ "ip.udp.68.dhcp.lease-time",
-					/* value= */ nf_fmt(buf, sizeof(buf), "%lu", ntohl(*(uint32_t *)opt))
+					/* value= */ nf_fmt(buf, sizeof(buf), "%lu", ntohl(*(uint32_t *)opt)),
+					/* append= */ true
 				);
 				break;
 

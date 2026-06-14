@@ -41,7 +41,8 @@ static void ipv6(ethcap_cap_t *cap, const ethcap_ipv6_t *ipv6, unsigned int len)
 			/* netaddr= */ cap->netaddr,
 			/* devaddr= */ cap->src_macaddr,
 			/* key= */ "ip.addr",
-			/* value= */ nf_ip62str(buf, ipv6->src)
+			/* value= */ nf_ip62str(buf, ipv6->src),
+			/* append= */ true
 		);
 	}
 

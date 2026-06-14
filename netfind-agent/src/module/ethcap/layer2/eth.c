@@ -54,7 +54,8 @@ static void eth(ethcap_cap_t *cap, const ethcap_eth_t *eth, unsigned int len) {
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ eth->src,
 		/* key= */ "eth.addr",
-		/* value= */ nf_mac2str(buf, eth->src, ':')
+		/* value= */ nf_mac2str(buf, eth->src, ':'),
+		/* append= */ true
 	);
 
 	// call registered protocol handlers

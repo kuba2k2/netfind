@@ -37,7 +37,8 @@ static void arp(ethcap_cap_t *cap, const ethcap_arp_t *arp, unsigned int len) {
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ cap->src_macaddr,
 		/* key= */ "ip.addr",
-		/* value= */ nf_ip42str(buf, arp->ipv4.src_ipaddr)
+		/* value= */ nf_ip42str(buf, arp->ipv4.src_ipaddr),
+		/* append= */ true
 	);
 }
 

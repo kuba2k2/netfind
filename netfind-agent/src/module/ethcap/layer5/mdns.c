@@ -52,7 +52,8 @@ static void mdns(ethcap_cap_t *cap, const ethcap_mdns_t *mdns, unsigned int len)
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ cap->src_macaddr,
 		/* key= */ "ip.udp.5353.protocol",
-		/* value= */ "mdns"
+		/* value= */ "mdns",
+		/* append= */ true
 	);
 
 	const dcpy_t pkt = {
@@ -194,7 +195,8 @@ static void devdb_put_service(ethcap_cap_t *cap, const char *service, const char
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ cap->src_macaddr,
 		/* key= */ nf_fmt(buf, sizeof(buf), "ip.udp.5353.mdns.[%s].%s", service, key),
-		/* value= */ value
+		/* value= */ value,
+		/* append= */ true
 	);
 }
 
@@ -210,7 +212,8 @@ static void devdb_put_a(ethcap_cap_t *cap, const dcpy_t *pkt, char *name, dcpy_t
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ cap->src_macaddr,
 		/* key= */ nf_fmt(buf + 20, sizeof(buf) - 20, "ip.udp.5353.mdns.host.[%s]", name),
-		/* value= */ nf_ip42str(buf, ipaddr)
+		/* value= */ nf_ip42str(buf, ipaddr),
+		/* append= */ true
 	);
 }
 
@@ -226,7 +229,8 @@ static void devdb_put_aaaa(ethcap_cap_t *cap, const dcpy_t *pkt, char *name, dcp
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ cap->src_macaddr,
 		/* key= */ nf_fmt(buf + 40, sizeof(buf) - 40, "ip.udp.5353.mdns.host.[%s]", name),
-		/* value= */ nf_ip62str(buf, ipaddr)
+		/* value= */ nf_ip62str(buf, ipaddr),
+		/* append= */ true
 	);
 }
 
