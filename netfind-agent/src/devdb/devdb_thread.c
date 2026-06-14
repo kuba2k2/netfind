@@ -44,17 +44,29 @@ void *devdb_thread(devdb_t *devdb) {
 					// record not updated since last sent
 					continue;
 
-				// record should be sent
+				// record should be sent - build a message topic
+				char topic[512 + 1];
 				char buf[40];
-				LT_I(
-					"%s / %s / %s / %s / %s",
-					record->sent_at ? "UPDATE" : "NEW",
+				snprintf(
+					/* stream= */ topic,
+					/* n= */ sizeof(topic),
+					/* format= */ "/network/%s/device/%s/%s",
 					nf_mac2str(buf, record->netaddr, '\0'),
 					nf_mac2str(buf + 20, record->devaddr, '\0'),
-					record->key,
-					record->value
+					record->key
 				);
 
+				// finally, publish the message
+				conn_pub(
+					/* conn= */ devdb->conn,
+					/* topic= */ topic,
+					/* value= */ record->value,
+					/* created_at= */ record->created_at,
+					/* updated_at= */ record->updated_at,
+					/* mode= */ record->append ? CONN_PUB_APPEND : CONN_PUB_PERSIST
+				);
+
+				// reset the last sent time
 				record->sent_at = now;
 			}
 		}
