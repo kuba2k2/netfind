@@ -17,6 +17,7 @@ devdb_t *devdb_init(conn_t *conn) {
 
 	if ((err = pthread_mutex_init(&devdb->records_mutex, NULL)))
 		NF_ERR(E, goto err, "Mutex init failed; err=%d", err);
+	devdb->records_mutex_init = true;
 
 	if ((err = pthread_create(&devdb->thread, NULL, (void *)devdb_thread, devdb)))
 		NF_ERR(E, goto err, "Devdb thread failed; err=%d", err);
@@ -36,7 +37,7 @@ void devdb_free(devdb_t *devdb) {
 		pthread_join(devdb->thread, NULL);
 	}
 
-	if (devdb->records_mutex)
+	if (devdb->records_mutex_init)
 		pthread_mutex_destroy(&devdb->records_mutex);
 	if (devdb->records_sem)
 		sem_destroy(&devdb->records_sem);

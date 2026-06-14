@@ -20,9 +20,11 @@ conn_t *conn_init(const char *url, const char *token, conn_online_cb_t online_cb
 
 	if ((err = pthread_mutex_init(&conn->send_msgs_mutex, NULL)))
 		NF_ERR(E, goto err, "Messages mutex init failed; err=%d", err);
+	conn->send_msgs_mutex_init = true;
 
 	if ((err = pthread_mutex_init(&conn->recv_cbs_mutex, NULL)))
 		NF_ERR(E, goto err, "Callbacks mutex init failed; err=%d", err);
+	conn->recv_cbs_mutex_init = true;
 
 	if ((err = pthread_create(&conn->thread, NULL, (void *)conn_thread, conn)))
 		NF_ERR(E, goto err, "Connection thread failed; err=%d", err);
@@ -42,9 +44,9 @@ void conn_free(conn_t *conn) {
 		pthread_join(conn->thread, NULL);
 	}
 
-	if (conn->recv_cbs_mutex)
+	if (conn->recv_cbs_mutex_init)
 		pthread_mutex_destroy(&conn->recv_cbs_mutex);
-	if (conn->send_msgs_mutex)
+	if (conn->send_msgs_mutex_init)
 		pthread_mutex_destroy(&conn->send_msgs_mutex);
 
 	curl_global_cleanup();

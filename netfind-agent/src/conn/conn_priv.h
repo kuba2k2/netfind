@@ -35,9 +35,11 @@ typedef struct conn_t {
 
 	conn_msg_t *send_msgs;
 	pthread_mutex_t send_msgs_mutex;
+	bool send_msgs_mutex_init;
 
 	conn_cb_t *recv_cbs;
 	pthread_mutex_t recv_cbs_mutex;
+	bool recv_cbs_mutex_init;
 } conn_t;
 
 // conn.c
