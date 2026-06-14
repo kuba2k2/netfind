@@ -31,6 +31,7 @@ typedef struct devdb_t {
 	pthread_mutex_t records_mutex; //!< Mutex for locking records
 	bool records_mutex_init;	   //!< Whether mutex was initialized
 	sem_t records_sem;			   //!< Semaphore for signalling record changes
+	bool records_sem_init;		   //!< Whether semaphore was initialized
 } devdb_t;
 
 // devdb.c
