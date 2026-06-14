@@ -6,6 +6,7 @@
 
 typedef struct conn_t conn_t;
 typedef struct conn_msg_t conn_msg_t;
+typedef void (*conn_online_cb_t)(void *param, conn_t *conn);
 typedef bool (*conn_cb_func_t)(void *param, const conn_msg_t *msg);
 
 typedef enum conn_msg_type_t {
@@ -25,7 +26,7 @@ typedef enum conn_pub_mode_t {
 } conn_pub_mode_t;
 
 // conn.c
-conn_t *conn_init(const char *url, const char *token);
+conn_t *conn_init(const char *url, const char *token, conn_online_cb_t online_cb, void *online_param);
 void conn_free(conn_t *conn);
 
 // conn_msg.c

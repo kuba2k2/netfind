@@ -28,6 +28,8 @@ typedef struct conn_cb_t {
 typedef struct conn_t {
 	char *url;
 	char *token;
+	conn_online_cb_t online_cb;
+	void *online_param;
 
 	pthread_t thread;
 

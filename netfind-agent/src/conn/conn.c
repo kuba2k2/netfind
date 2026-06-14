@@ -2,7 +2,7 @@
 
 #include "conn_priv.h"
 
-conn_t *conn_init(const char *url, const char *token) {
+conn_t *conn_init(const char *url, const char *token, conn_online_cb_t online_cb, void *online_param) {
 	if (!url)
 		return NULL;
 
@@ -10,8 +10,10 @@ conn_t *conn_init(const char *url, const char *token) {
 	conn_t *conn;
 	NF_MALLOC(conn, sizeof(*conn), return NULL);
 
-	conn->url	= strdup(url);
-	conn->token = token ? strdup(token) : NULL;
+	conn->url		   = strdup(url);
+	conn->token		   = token ? strdup(token) : NULL;
+	conn->online_cb	   = online_cb;
+	conn->online_param = online_param;
 
 	if ((err = curl_global_init(CURL_GLOBAL_ALL)))
 		NF_ERR(E, goto err, "curl init failed; err=%s", curl_easy_strerror(err));
@@ -88,6 +90,10 @@ void *conn_thread(conn_t *conn) {
 		LT_I("curl connecting...");
 		int err = curl_easy_perform(curl);
 		LT_I("curl connected");
+
+		// call the online callback
+		if (conn->online_cb)
+			conn->online_cb(conn->online_param, conn);
 
 		// loop while the connection is active
 		while (err == CURLE_OK || err == CURLE_AGAIN) {
