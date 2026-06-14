@@ -6,11 +6,17 @@ CURLcode conn_ws_send(conn_t *conn, CURL *curl) {
 	CURLcode err = CURLE_OK;
 
 	// wait for messages from the send queue
-	if (conn->send_msgs == NULL)
+	conn_msg_t *msgs = NULL;
+	NF_WITH_MUTEX(conn->send_msgs_mutex) {
+		msgs = conn->send_msgs;
+		if (msgs == NULL)
+			// no messages, break out of mutex loop
+			continue;
+		// take all enqueued messages
+		conn->send_msgs = NULL;
+	}
+	if (msgs == NULL)
 		return CURLE_AGAIN;
-	// take all enqueued messages
-	conn_msg_t *msgs = conn->send_msgs;
-	conn->send_msgs	 = NULL;
 
 	// build a Protobuf output stream for sizing
 	pb_ostream_t size_stream = PB_OSTREAM_SIZING;
@@ -30,6 +36,12 @@ CURLcode conn_ws_send(conn_t *conn, CURL *curl) {
 	ret = pb_encode_MessageList(&stream, msgs, 0);
 	if (!ret)
 		goto out;
+
+	// count messages for logging purposes
+	conn_msg_t *msg = NULL;
+	int msg_count	= 0;
+	DL_COUNT(msgs, msg, msg_count);
+	LT_I("Sending %d message(s), total length %llu", msg_count, buf_len);
 
 	// send the entire message
 	do {

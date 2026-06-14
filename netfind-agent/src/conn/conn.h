@@ -38,8 +38,6 @@ void conn_msg_add(
 	uint64_t updated_at,
 	conn_pub_mode_t mode
 );
-void conn_msg_free(conn_msg_t *msg);
-void conn_msgs_free(conn_msg_t *msgs);
 void conn_pub(
 	conn_t *conn,
 	const char *topic,
