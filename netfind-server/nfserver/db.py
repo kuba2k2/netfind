@@ -51,7 +51,7 @@ class Database:
     def get(self, topic_or_pattern: str | Pattern) -> list[NetfindMessage]:
         query_topic = topic_or_pattern
         if isinstance(topic_or_pattern, Pattern):
-            query_topic = query_topic.replace("/+/", "/%/")
+            query_topic = query_topic.replace("/+", "/%")
             query_topic = query_topic.replace("/#", "/%")
         # fetch all matching rows
         rows = self.db.execute(
