@@ -314,7 +314,7 @@ static void devdb_put_txt(ethcap_cap_t *cap, const dcpy_t *pkt, char *name, dcpy
 			continue;
 		// put TXT key and value
 		char buf[128];
-		devdb_put_service(cap, service, nf_fmt(buf, sizeof(buf), "txt.[%s]", kv[0]), kv[1]);
+		devdb_put_service(cap, service, nf_fmt(buf, sizeof(buf), "txt/[%s]", kv[0]), kv[1]);
 	}
 }
 
