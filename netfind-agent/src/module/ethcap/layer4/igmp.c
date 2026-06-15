@@ -29,7 +29,7 @@ static void igmp(ethcap_cap_t *cap, const ethcap_igmp_t *igmp, unsigned int len)
 		/* devdb= */ cap->devdb,
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ cap->src_macaddr,
-		/* key= */ "ip.igmp",
+		/* key= */ "ip/igmp",
 		/* value= */ nf_ip42str(buf, igmp->group_addr),
 		/* append= */ true
 	);

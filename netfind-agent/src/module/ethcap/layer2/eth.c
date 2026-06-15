@@ -53,7 +53,7 @@ static void eth(ethcap_cap_t *cap, const ethcap_eth_t *eth, unsigned int len) {
 		/* devdb= */ cap->devdb,
 		/* netaddr= */ cap->netaddr,
 		/* devaddr= */ eth->src,
-		/* key= */ "eth.addr",
+		/* key= */ "eth/addr",
 		/* value= */ nf_mac2str(buf, eth->src, ':'),
 		/* append= */ true
 	);

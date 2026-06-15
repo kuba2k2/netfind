@@ -93,7 +93,7 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 			/* devdb= */ cap->devdb,
 			/* netaddr= */ cap->netaddr,
 			/* devaddr= */ cap->src_macaddr,
-			/* key= */ "ip.udp.67.protocol",
+			/* key= */ "ip/udp/67/protocol",
 			/* value= */ "dhcp-server",
 			/* append= */ true
 		);
@@ -102,7 +102,7 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 			/* devdb= */ cap->devdb,
 			/* netaddr= */ cap->netaddr,
 			/* devaddr= */ cap->src_macaddr,
-			/* key= */ "ip.udp.68.protocol",
+			/* key= */ "ip/udp/68/protocol",
 			/* value= */ "dhcp",
 			/* append= */ true
 		);
@@ -117,31 +117,31 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 		// parse supported options
 		switch (opt_type) {
 			case DHCP_SUBNET_MASK:
-				devdb_put_ip_addrs(cap, dhcp, "ip.udp.68.dhcp.subnet", opt, opt_len);
+				devdb_put_ip_addrs(cap, dhcp, "ip/udp/68/dhcp/subnet", opt, opt_len);
 				break;
 
 			case DHCP_ROUTER:
-				devdb_put_ip_addrs(cap, dhcp, "ip.udp.68.dhcp.router", opt, opt_len);
+				devdb_put_ip_addrs(cap, dhcp, "ip/udp/68/dhcp/router", opt, opt_len);
 				break;
 
 			case DHCP_DNS_SERVERS:
-				devdb_put_ip_addrs(cap, dhcp, "ip.udp.68.dhcp.dns", opt, opt_len);
+				devdb_put_ip_addrs(cap, dhcp, "ip/udp/68/dhcp/dns", opt, opt_len);
 				break;
 
 			case DHCP_HOST_NAME:
-				devdb_put_string(cap, dhcp, "ip.udp.68.dhcp.hostname", opt, opt_len);
+				devdb_put_string(cap, dhcp, "ip/udp/68/dhcp/hostname", opt, opt_len);
 				break;
 
 			case DHCP_DOMAIN_NAME:
-				devdb_put_string(cap, dhcp, "ip.udp.68.dhcp.domain", opt, opt_len);
+				devdb_put_string(cap, dhcp, "ip/udp/68/dhcp/domain", opt, opt_len);
 				break;
 
 			case DHCP_NTP_SERVERS_ADDRESSES:
-				devdb_put_ip_addrs(cap, dhcp, "ip.udp.68.dhcp.ntp", opt, opt_len);
+				devdb_put_ip_addrs(cap, dhcp, "ip/udp/68/dhcp/ntp", opt, opt_len);
 				break;
 
 			case DHCP_REQUESTED_IP_ADDRESS:
-				devdb_put_ip_addrs(cap, dhcp, "ip.udp.68.dhcp.ipaddr", opt, opt_len);
+				devdb_put_ip_addrs(cap, dhcp, "ip/udp/68/dhcp/ipaddr", opt, opt_len);
 				break;
 
 			case DHCP_IP_ADDRESS_LEASE_TIME:
@@ -149,7 +149,7 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 					/* devdb= */ cap->devdb,
 					/* netaddr= */ cap->netaddr,
 					/* devaddr= */ dhcp->mac_addr,
-					/* key= */ "ip.udp.68.dhcp.lease-time",
+					/* key= */ "ip/udp/68/dhcp/lease-time",
 					/* value= */ nf_fmt(buf, sizeof(buf), "%lu", ntohl(*(uint32_t *)opt)),
 					/* append= */ true
 				);
@@ -162,19 +162,19 @@ static void dhcp(ethcap_cap_t *cap, const ethcap_dhcp_t *dhcp, unsigned int len)
 				break;
 
 			case DHCP_SERVER_IDENTIFIER:
-				devdb_put_ip_addrs(cap, dhcp, "ip.udp.68.dhcp.server", opt, opt_len);
+				devdb_put_ip_addrs(cap, dhcp, "ip/udp/68/dhcp/server", opt, opt_len);
 				break;
 
 			case DHCP_PARAMETER_REQUEST_LIST:
 				break;
 
 			case DHCP_VENDOR_CLASS_IDENTIFIER:
-				devdb_put_string(cap, dhcp, "ip.udp.68.dhcp.vendor", opt, opt_len);
+				devdb_put_string(cap, dhcp, "ip/udp/68/dhcp/vendor", opt, opt_len);
 				break;
 
 			case DHCP_FQDN:
 				opt += 3, opt_len -= 3;
-				devdb_put_string(cap, dhcp, "ip.udp.68.dhcp.fqdn", opt, opt_len);
+				devdb_put_string(cap, dhcp, "ip/udp/68/dhcp/fqdn", opt, opt_len);
 				break;
 		}
 	}

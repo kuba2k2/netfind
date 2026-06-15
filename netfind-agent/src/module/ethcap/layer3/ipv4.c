@@ -50,7 +50,7 @@ static void ipv4(ethcap_cap_t *cap, const ethcap_ipv4_t *ipv4, unsigned int len)
 				/* devdb= */ cap->devdb,
 				/* netaddr= */ cap->netaddr,
 				/* devaddr= */ cap->src_macaddr,
-				/* key= */ "ip.addr",
+				/* key= */ "ip/addr",
 				/* value= */ nf_ip42str(buf, ipv4->src),
 				/* append= */ true
 			);
